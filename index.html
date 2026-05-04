@@ -645,6 +645,10 @@ footer {
   <div class="sidebar-section">
     <div class="section-title">文字</div>
     <div class="field">
+      <label>品牌名稱 <span style="color:var(--text3);font-weight:400;">（顯示於右上角）</span></label>
+      <input type="text" id="brandName" placeholder="例：PostFlow / @yourname" maxlength="20">
+    </div>
+    <div class="field">
       <label>顏色</label>
       <div style="display:flex;gap:6px;align-items:center;" id="txtRow"></div>
     </div>
@@ -757,7 +761,7 @@ footer {
             <div class="p-bg" id="pbg"></div>
             <div class="p-fil" id="pfil"></div>
             <div class="p-cnt" id="pcnt">
-              <div class="p-tag" id="ptag"></div>
+              <div id="pbrand" style="position:absolute;top:0;right:0;font-size:10px;font-weight:600;letter-spacing:0.08em;opacity:0.75;text-transform:uppercase;"></div>
               <div class="p-title" id="ptitle"></div>
               <div class="p-body" id="pbody"></div>
               <div class="p-num" id="pnum"></div>
@@ -957,10 +961,13 @@ function upd(){
   cnt.style.alignItems=s.align==='left'?'flex-start':s.align==='center'?'center':'flex-end';
   cnt.style.justifyContent=s.valign;cnt.style.textAlign=s.align;
   const sm=w<180;
-  const ptc={Hook:'rgba(245,200,50,0.2)',CTA:'rgba(62,207,142,0.2)','一般':'rgba(255,255,255,0.12)'};
-  const pt=document.getElementById('ptag');
-  pt.textContent=s.type;pt.style.background=ptc[s.type]||'rgba(255,255,255,0.12)';
-  pt.style.color=s.type==='Hook'?'#f5c832':s.type==='CTA'?'#3ecf8e':s.txtColor;
+  // 品牌名稱右上角
+  const brandVal=document.getElementById('brandName').value.trim();
+  const pbrand=document.getElementById('pbrand');
+  pbrand.textContent=brandVal;
+  pbrand.style.color=s.txtColor;
+  pbrand.style.padding=pad;
+  pbrand.style.fontSize=sm?'8px':'10px';
   document.getElementById('ptitle').style.fontSize=(sm?Math.max(11,s.titleSize-4):s.titleSize)+'px';
   document.getElementById('pbody').style.fontSize=sm?'10px':'13px';
   document.getElementById('ptitle').textContent=s.mainTitle||'主標題';
@@ -1125,15 +1132,21 @@ function copyAll(){
 
 function saveAll(){
   saveSlide();
-  try{localStorage.setItem('postflow_slides',JSON.stringify(slides));localStorage.setItem('postflow_ratio',globalRatio);alert('✓ 已儲存至本地端！');}
-  catch(e){alert('儲存失敗：'+e.message);}
+  try{
+    localStorage.setItem('postflow_slides',JSON.stringify(slides));
+    localStorage.setItem('postflow_ratio',globalRatio);
+    localStorage.setItem('postflow_brand',document.getElementById('brandName').value);
+    alert('✓ 已儲存至本地端！');
+  }catch(e){alert('儲存失敗：'+e.message);}
 }
 
 function loadSaved(){
   try{
     const s=localStorage.getItem('postflow_slides');const r=localStorage.getItem('postflow_ratio');
+    const b=localStorage.getItem('postflow_brand');
     if(s){slides=JSON.parse(s);}
     if(r){globalRatio=parseInt(r);document.querySelectorAll('.ratio-btn').forEach((b,j)=>b.classList.toggle('on',j===globalRatio));document.getElementById('ratioBadge').textContent=`${RATIOS[globalRatio].l} ${RATIOS[globalRatio].n}`;}
+    if(b){document.getElementById('brandName').value=b;}
   }catch(e){}
 }
 
@@ -1149,6 +1162,10 @@ function switchTab(tab){
 document.getElementById('fopacity').oninput=function(){document.getElementById('opVal').textContent=this.value+'%';upd();};
 document.getElementById('mainTitle').oninput=upd;
 document.getElementById('bodyText').oninput=upd;
+document.getElementById('brandName').oninput=function(){
+  try{localStorage.setItem('postflow_brand',this.value);}catch(e){}
+  upd();
+};
 document.getElementById('tsz').oninput=function(){document.getElementById('tszVal').textContent=this.value+'px';upd();};
 document.getElementById('cMinus').onclick=()=>{if(slCnt>3){slCnt--;document.getElementById('cVal').textContent=slCnt;}};
 document.getElementById('cPlus').onclick=()=>{if(slCnt<10){slCnt++;document.getElementById('cVal').textContent=slCnt;}};
