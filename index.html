@@ -508,6 +508,7 @@ footer {
   .main.tab-active { display: flex; }
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -515,6 +516,7 @@ footer {
 <header class="topbar">
   <div class="logo">Post<span>Flow</span></div>
   <div class="topbar-actions">
+    <button class="btn btn-secondary btn-sm" onclick="downloadAll()" title="依序下載所有投影片">⬇ 全部下載</button>
     <button class="btn btn-secondary btn-sm" onclick="copyAll()">📋 複製文案</button>
     <button class="btn btn-primary btn-sm" onclick="saveAll()">💾 儲存</button>
   </div>
@@ -773,6 +775,7 @@ footer {
       <div style="display:flex;gap:8px;justify-content:center;">
         <button class="btn btn-secondary btn-sm" onclick="prevSlide()">← 上一張</button>
         <button class="btn btn-secondary btn-sm" onclick="saveSlide()">💾 儲存此張</button>
+        <button class="btn btn-primary btn-sm" onclick="downloadSlide()">⬇ 下載圖片</button>
         <button class="btn btn-secondary btn-sm" onclick="nextSlide()">下一張 →</button>
       </div>
     </div>
@@ -1185,6 +1188,66 @@ document.addEventListener('keydown',e=>{
 });
 
 buildAll();loadSaved();loadSlide(0);
+
+// ── 全部下載（依序切換並下載每張）──
+async function downloadAll(){
+  saveSlide();
+  const total=slides.length;
+  const topBtn=document.querySelector('[onclick="downloadAll()"]');
+  topBtn.disabled=true;
+  for(let i=0;i<total;i++){
+    topBtn.innerHTML=`⏳ ${i+1}/${total}`;
+    loadSlide(i);
+    await new Promise(r=>setTimeout(r,300)); // 等待渲染
+    const box=document.getElementById('pbox');
+    const s=slides[i];
+    const title=(s.mainTitle||'投影片'+(i+1)).replace(/[\/\\:*?"<>|]/g,'').trim().slice(0,20);
+    await html2canvas(box,{scale:2,useCORS:true,backgroundColor:null,logging:false})
+      .then(canvas=>{
+        const link=document.createElement('a');
+        link.download=`postflow_${String(i+1).padStart(2,'0')}_${title}.png`;
+        link.href=canvas.toDataURL('image/png');
+        link.click();
+      }).catch(()=>{});
+    await new Promise(r=>setTimeout(r,500)); // 下載間隔
+  }
+  topBtn.innerHTML='✓ 全部完成';
+  setTimeout(()=>{topBtn.innerHTML='⬇ 全部下載';topBtn.disabled=false;},2500);
+}
+function downloadSlide(){
+  const box=document.getElementById('pbox');
+  const btn=document.querySelector('[onclick="downloadSlide()"]');
+  const origText=btn.innerHTML;
+  btn.innerHTML='⏳ 產生中...';btn.disabled=true;
+
+  // 取得目前投影片資訊作為檔名
+  const s=slides[curS];
+  const title=(s.mainTitle||'投影片'+(curS+1)).replace(/[\/\\:*?"<>|]/g,'').trim().slice(0,20);
+  const filename=`postflow_${curS+1}_${title}.png`;
+
+  // 取得預覽框實際尺寸（高解析度 x2）
+  const scale=2;
+  html2canvas(box,{
+    scale:scale,
+    useCORS:true,
+    allowTaint:true,
+    backgroundColor:null,
+    width:box.offsetWidth,
+    height:box.offsetHeight,
+    logging:false,
+  }).then(canvas=>{
+    const link=document.createElement('a');
+    link.download=filename;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    btn.innerHTML='✓ 已下載！';
+    setTimeout(()=>{btn.innerHTML=origText;btn.disabled=false;},2000);
+  }).catch(err=>{
+    console.error(err);
+    btn.innerHTML='✗ 失敗，請重試';
+    setTimeout(()=>{btn.innerHTML=origText;btn.disabled=false;},2000);
+  });
+}
 </script>
 </body>
 </html>
