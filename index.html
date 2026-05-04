@@ -533,6 +533,23 @@ footer {
         AI 智慧產文
         <span class="ai-badge">Claude</span>
       </div>
+
+      <!-- 步驟說明 -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text2);">
+          <span style="background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
+          填寫關鍵字 → 點「產生提示詞」
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text2);">
+          <span style="background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
+          複製提示詞 → 開新分頁貼入 <a href="https://claude.ai" target="_blank" style="color:var(--accent2);text-decoration:none;">claude.ai</a>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text2);">
+          <span style="background:var(--accent);color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
+          複製 Claude 回傳的 JSON → 貼入下方套用
+        </div>
+      </div>
+
       <div class="field">
         <label>主題關鍵字</label>
         <input type="text" id="kw" placeholder="例：嗅覺行銷、健身習慣、品牌故事…">
@@ -550,22 +567,38 @@ footer {
         <label>語氣風格</label>
         <div class="chip-group" id="toneRow"></div>
       </div>
-      <button class="btn btn-primary" style="width:100%;" onclick="reqGenText()">
+
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px;" onclick="reqGenText()">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1l1.8 4.2L14 7l-4.2 1.8L8 13l-1.8-4.2L2 7l4.2-1.8z" fill="currentColor"/></svg>
-        產生輪播文案
+        產生提示詞並複製
       </button>
-      <div class="hint-box">點擊後 AI 會在對話回傳 JSON，<b>複製後貼入下方套用</b>即可填入所有投影片。</div>
+
+      <!-- 提示詞預覽區 -->
+      <div id="promptPreviewWrap" style="display:none;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;">
+          <span>📋 提示詞已產生</span>
+          <button class="btn btn-secondary btn-sm" onclick="copyPrompt()" style="padding:3px 10px;font-size:11px;">再次複製</button>
+        </div>
+        <textarea id="promptPreview" readonly style="min-height:90px;font-size:11px;font-family:monospace;background:rgba(255,255,255,0.03);color:var(--text2);border-color:rgba(124,111,247,0.3);line-height:1.5;"></textarea>
+        <a href="https://claude.ai" target="_blank" class="btn btn-secondary" style="width:100%;margin-top:8px;justify-content:center;text-decoration:none;display:flex;">
+          🔗 開啟 claude.ai（貼入提示詞）
+        </a>
+      </div>
+
     </div>
   </div>
 
   <!-- 貼入 JSON -->
   <div class="sidebar-section">
-    <div class="section-title">貼入 JSON 文案</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <div class="section-title" style="margin:0;">貼入 JSON 文案</div>
+      <span style="font-size:11px;color:var(--text3);">步驟 3</span>
+    </div>
     <div class="field">
-      <textarea id="pasteArea" placeholder='{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},...]}' style="min-height:80px;font-size:12px;font-family:monospace;"></textarea>
+      <textarea id="pasteArea" placeholder='將 Claude 回傳的 JSON 貼在這裡…&#10;{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},...]}'  style="min-height:90px;font-size:12px;font-family:monospace;"></textarea>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn btn-green btn-sm" onclick="parseAndApply()" style="flex:1;">套用文案</button>
+      <button class="btn btn-green btn-sm" onclick="parseAndApply()" style="flex:1;">✓ 套用文案至投影片</button>
       <span class="status" id="parseStat"></span>
     </div>
   </div>
@@ -1021,14 +1054,43 @@ function renderThumbs(){
 function prevSlide(){if(curS>0){saveSlide();loadSlide(curS-1);}}
 function nextSlide(){if(curS<slides.length-1){saveSlide();loadSlide(curS+1);}}
 
+let lastPrompt='';
 function reqGenText(){
   const kw=document.getElementById('kw').value.trim();
-  if(!kw){alert('請先填寫主題關鍵字');return;}
+  if(!kw){
+    document.getElementById('kw').focus();
+    document.getElementById('kw').style.borderColor='var(--red)';
+    setTimeout(()=>document.getElementById('kw').style.borderColor='',2000);
+    return;
+  }
   const total=slCnt;
-  const prompt=`請根據主題關鍵字「${kw}」，產生 ${total} 張 Instagram 輪播貼文文案，語氣風格「${selTone}」。規則：第1張type為"Hook"（強烈開場，使用${selHookType}手法），第${total}張type為"CTA"（行動呼籲，引導讀者${selCtaAction}），其餘type為"一般"。內文不超過30字，主標題不超過15字。只回傳JSON：{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},{"type":"一般","mainTitle":"...","bodyText":"..."},{"type":"CTA","mainTitle":"...","bodyText":"..."}]}`;
+  lastPrompt=`請根據主題關鍵字「${kw}」，產生 ${total} 張 Instagram 輪播貼文文案，語氣風格「${selTone}」。規則：第1張type為"Hook"（強烈開場，使用${selHookType}手法），第${total}張type為"CTA"（行動呼籲，引導讀者${selCtaAction}），其餘type為"一般"（每張一個重點）。內文不超過30字，主標題不超過15字。請只回傳以下JSON，不含任何說明或markdown：{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},{"type":"一般","mainTitle":"...","bodyText":"..."},{"type":"CTA","mainTitle":"...","bodyText":"..."}]}`;
+  // 顯示預覽
+  document.getElementById('promptPreview').value=lastPrompt;
+  document.getElementById('promptPreviewWrap').style.display='block';
+  // 自動複製
   if(navigator.clipboard){
-    navigator.clipboard.writeText(prompt).then(()=>{alert('✓ 提示詞已複製！\n請貼入 Claude 對話框，取得 JSON 後貼回「貼入 JSON 文案」欄位。');}).catch(()=>window.prompt('請複製：',prompt));
-  } else { window.prompt('請複製：',prompt); }
+    navigator.clipboard.writeText(lastPrompt).then(()=>{
+      const btn=document.querySelector('[onclick="reqGenText()"]');
+      const orig=btn.innerHTML;
+      btn.innerHTML='✓ 已複製！請開啟 claude.ai 貼上';
+      btn.style.background='var(--green)';
+      setTimeout(()=>{btn.innerHTML=orig;btn.style.background='';},3000);
+    }).catch(()=>{});
+  }
+  // 捲動到提示詞預覽
+  setTimeout(()=>document.getElementById('promptPreviewWrap').scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+}
+
+function copyPrompt(){
+  if(!lastPrompt)return;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(lastPrompt).then(()=>{
+      const btn=document.querySelector('[onclick="copyPrompt()"]');
+      btn.textContent='✓ 已複製';
+      setTimeout(()=>btn.textContent='再次複製',2000);
+    });
+  } else { window.prompt('請手動複製：',lastPrompt); }
 }
 
 function parseAndApply(){
