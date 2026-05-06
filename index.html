@@ -813,27 +813,27 @@ const TONES=['專業權威','溫暖親切','活潑幽默','激勵人心','故事
 const HOOK_TYPES=['強烈問句','數字衝擊','反直覺陳述','痛點共鳴','驚人事實'];
 const CTA_ACTIONS=['按讚收藏','留言互動','追蹤帳號','分享給朋友','點擊連結'];
 const GRADS=[
-  {n:'深夜藍',c:'linear-gradient(135deg,#0a1f44,#1a3a6b)'},
-  {n:'紫羅蘭',c:'linear-gradient(135deg,#1a0533,#533AB7)'},
-  {n:'森林綠',c:'linear-gradient(135deg,#001a0a,#0F6E56)'},
-  {n:'玫瑰紅',c:'linear-gradient(135deg,#1a0000,#993C1D)'},
-  {n:'暮光橙',c:'linear-gradient(135deg,#1a0800,#c05c1a)'},
-  {n:'星空紫',c:'linear-gradient(135deg,#0d0d2b,#4a2c8a)'},
-  {n:'薄荷青',c:'linear-gradient(135deg,#003322,#1D9E75)'},
-  {n:'玫瑰金',c:'linear-gradient(135deg,#3d1515,#c07850)'},
-  {n:'極光',  c:'linear-gradient(135deg,#001a33,#0F6E56,#533AB7)'},
-  {n:'日落',  c:'linear-gradient(135deg,#1a0a00,#8B3A00,#c05c1a)'},
-  {n:'霧霾灰',c:'linear-gradient(135deg,#1a1a2e,#3a3a5c)'},
-  {n:'深海',  c:'linear-gradient(135deg,#001233,#0a3d6b)'},
-  {n:'丁香紫',c:'linear-gradient(135deg,#2d0050,#7b2d8b)'},
-  {n:'炭黑',  c:'linear-gradient(135deg,#0a0a0a,#2c2c2c)'},
-  {n:'珊瑚紅',c:'linear-gradient(135deg,#2d0a0a,#c04848)'},
+  {n:'霧玫瑰', c:'linear-gradient(135deg,#c9a39a,#e8cdc8)'},
+  {n:'煙灰藍', c:'linear-gradient(135deg,#7e95a3,#b0c4cc)'},
+  {n:'沙漠棕', c:'linear-gradient(135deg,#b5a090,#d6c8be)'},
+  {n:'薄荷灰', c:'linear-gradient(135deg,#8aaba0,#b8cdc8)'},
+  {n:'藕粉紫', c:'linear-gradient(135deg,#b09ab5,#d4c4d8)'},
+  {n:'暖米白', c:'linear-gradient(135deg,#c8b89a,#e2d5c3)'},
+  {n:'霧霾綠', c:'linear-gradient(135deg,#8fa898,#bcd0c8)'},
+  {n:'灰丁香', c:'linear-gradient(135deg,#a99ab5,#cfc4d8)'},
+  {n:'杏仁橘', c:'linear-gradient(135deg,#c4a882,#ddc9aa)'},
+  {n:'煙燻粉', c:'linear-gradient(135deg,#c4a0a0,#dfc8c8)'},
+  {n:'鐵灰藍', c:'linear-gradient(135deg,#6e8090,#9aaab8)'},
+  {n:'橄欖灰', c:'linear-gradient(135deg,#96a080,#bcc4a8)'},
+  {n:'玫瑰棕', c:'linear-gradient(135deg,#b09080,#cdb8b0)'},
+  {n:'粉霧藍', c:'linear-gradient(135deg,#94a8c0,#c0d0dc)'},
+  {n:'奶茶灰', c:'linear-gradient(135deg,#b8a898,#d4c8bc)'},
 ];
 
-let globalRatio=0,slCnt=5,curS=0,selFil='#000000',selTxt='#ffffff',selTone='激勵人心';
+let globalRatio=0,slCnt=5,curS=0,selFil='#ffffff',selTxt='#3a3028',selTone='激勵人心';
 let selHookType=HOOK_TYPES[0], selCtaAction=CTA_ACTIONS[0];
 let curGrad=GRADS[0].c;
-const def=()=>({grad:GRADS[0].c,filterColor:'#000000',filterOpacity:30,mainTitle:'',bodyText:'',txtColor:'#ffffff',align:'left',valign:'flex-start',titleSize:22,type:'一般',ratio:0,hookType:HOOK_TYPES[0],ctaAction:CTA_ACTIONS[0]});
+const def=()=>({grad:GRADS[0].c,filterColor:'#ffffff',filterOpacity:15,mainTitle:'',bodyText:'',txtColor:'#3a3028',align:'left',valign:'flex-start',titleSize:22,type:'一般',ratio:0,hookType:HOOK_TYPES[0],ctaAction:CTA_ACTIONS[0]});
 let slides=[{...def(),mainTitle:'輪播貼文從這裡開始',bodyText:'填入主題關鍵字，讓 AI 幫你產出完整的輪播文案。',type:'一般',grad:GRADS[0].c}];
 
 const rgb=h=>({r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)});
