@@ -1202,7 +1202,10 @@ async function downloadAll(){
     const box=document.getElementById('pbox');
     const s=slides[i];
     const title=(s.mainTitle||'投影片'+(i+1)).replace(/[\/\\:*?"<>|]/g,'').trim().slice(0,20);
-    await html2canvas(box,{scale:2,useCORS:true,backgroundColor:null,logging:false})
+    const TARGET=1920;
+    const longSide=Math.max(box.offsetWidth,box.offsetHeight);
+    const scale=Math.max(Math.ceil(TARGET/longSide),2);
+    await html2canvas(box,{scale:scale,useCORS:true,backgroundColor:null,logging:false})
       .then(canvas=>{
         const link=document.createElement('a');
         link.download=`postflow_${String(i+1).padStart(2,'0')}_${title}.png`;
@@ -1220,13 +1223,15 @@ function downloadSlide(){
   const origText=btn.innerHTML;
   btn.innerHTML='⏳ 產生中...';btn.disabled=true;
 
-  // 取得目前投影片資訊作為檔名
   const s=slides[curS];
   const title=(s.mainTitle||'投影片'+(curS+1)).replace(/[\/\\:*?"<>|]/g,'').trim().slice(0,20);
   const filename=`postflow_${curS+1}_${title}.png`;
 
-  // 取得預覽框實際尺寸（高解析度 x2）
-  const scale=2;
+  // 長邊至少 1920px
+  const TARGET=1920;
+  const longSide=Math.max(box.offsetWidth, box.offsetHeight);
+  const scale=Math.max(Math.ceil(TARGET/longSide), 2);
+
   html2canvas(box,{
     scale:scale,
     useCORS:true,
@@ -1240,8 +1245,8 @@ function downloadSlide(){
     link.download=filename;
     link.href=canvas.toDataURL('image/png');
     link.click();
-    btn.innerHTML='✓ 已下載！';
-    setTimeout(()=>{btn.innerHTML=origText;btn.disabled=false;},2000);
+    btn.innerHTML=`✓ 已下載（${canvas.width}×${canvas.height}px）`;
+    setTimeout(()=>{btn.innerHTML=origText;btn.disabled=false;},2500);
   }).catch(err=>{
     console.error(err);
     btn.innerHTML='✗ 失敗，請重試';
