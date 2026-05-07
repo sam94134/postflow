@@ -674,6 +674,16 @@ footer {
   <!-- 濾鏡 -->
   <div class="sidebar-section">
     <div class="section-title">濾鏡疊加</div>
+    <!-- 圖片模式提示 -->
+    <div id="photoFilterHint" style="display:none;font-size:11px;color:var(--amber);background:var(--amber-bg);border-radius:var(--radius-sm);padding:7px 10px;margin-bottom:10px;line-height:1.5;">
+      📷 照片背景模式，建議搭配深色濾鏡讓文字更清晰。
+      <div style="display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 9px;" onclick="quickFilter('#2a2018',50)">深棕 50%</button>
+        <button class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 9px;" onclick="quickFilter('#000000',45)">純黑 45%</button>
+        <button class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 9px;" onclick="quickFilter('#1e2a30',40)">藍灰 40%</button>
+        <button class="btn btn-secondary btn-sm" style="font-size:11px;padding:3px 9px;" onclick="quickFilter('#ffffff',20)">白霧 20%</button>
+      </div>
+    </div>
     <div class="filter-dots" id="filterRow" style="margin-bottom:12px;"></div>
     <div class="field-row">
       <label style="margin:0;flex-shrink:0;font-size:12px;color:var(--text2);">透明度</label>
@@ -799,9 +809,9 @@ footer {
       <div class="preview-wrap">
         <div>
           <div class="preview-box" id="pbox">
-            <div class="p-bg" id="pbg"></div>
-            <div class="p-fil" id="pfil"></div>
-            <div class="p-cnt" id="pcnt">
+            <div class="p-bg" id="pbg" style="z-index:0;"></div>
+            <div class="p-fil" id="pfil" style="z-index:1;"></div>
+            <div class="p-cnt" id="pcnt" style="z-index:2;">
               <div id="pbrand" style="position:absolute;bottom:0;right:0;font-size:10px;font-weight:600;letter-spacing:0.08em;opacity:0.75;text-transform:uppercase;"></div>
               <div class="p-title" id="ptitle"></div>
               <div class="p-body" id="pbody"></div>
@@ -1059,6 +1069,18 @@ function applyCustomGrad(){
   document.querySelectorAll('.grad-swatch').forEach(x=>x.classList.remove('on'));
   upd();renderThumbs();
 }
+function quickFilter(color, opacity){
+  selFil=color;
+  document.getElementById('fopacity').value=opacity;
+  document.getElementById('opVal').textContent=opacity+'%';
+  // 更新濾鏡圓點選中狀態
+  document.querySelectorAll('#filterRow .fdot').forEach((d,j)=>d.classList.toggle('on',FC[j]?.h===color));
+  // 儲存到目前投影片
+  slides[curS].filterColor=color;
+  slides[curS].filterOpacity=opacity;
+  upd();renderThumbs();
+}
+
 function applyGradAll(){slides.forEach(s=>s.grad=curGrad);renderThumbs();upd();}
 
 function getS(){
@@ -1095,9 +1117,18 @@ function upd(){
     pbgEl.style.backgroundImage='';
     pbgEl.style.background=slides[curS]?.grad||curGrad;
   }
+  // 濾鏡：圖片模式下確保濾鏡層正確顯示
   const c=rgb(s.filterColor);
-  document.getElementById('pfil').style.background=s.filterColor==='#ffffff'
-    ?`rgba(255,255,255,${s.filterOpacity/100})`:`rgba(${c.r},${c.g},${c.b},${s.filterOpacity/100})`;
+  const filAlpha=s.filterOpacity/100;
+  const filColor=s.filterColor==='#ffffff'
+    ?`rgba(255,255,255,${filAlpha})`
+    :`rgba(${c.r},${c.g},${c.b},${filAlpha})`;
+  document.getElementById('pfil').style.background=filColor;
+  document.getElementById('pfil').style.zIndex='1';
+  document.getElementById('pcnt').style.zIndex='2';
+  // 圖片模式時顯示濾鏡提示
+  const photoHint=document.getElementById('photoFilterHint');
+  if(photoHint) photoHint.style.display=imgBg?'block':'none';
   const cnt=document.getElementById('pcnt');
   cnt.style.padding=pad;
   cnt.style.alignItems=s.align==='left'?'flex-start':s.align==='center'?'center':'flex-end';
