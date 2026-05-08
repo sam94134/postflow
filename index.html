@@ -750,14 +750,14 @@ footer {
         <div class="special-panel-title">🪝 Hook 開場設定</div>
         <div class="hook-tip">好的 Hook 讓人停下滑動。<span>用強烈問句、數字衝擊或反直覺陳述</span>抓住注意力。</div>
         <div class="field">
-          <label>Hook 主標題（≤ 15 字）</label>
-          <input type="text" id="hookTitle" placeholder="例：你知道氣味能改變消費決策嗎？" maxlength="40">
-          <div class="char-count" id="hookTitleCount">0 / 15</div>
+          <label>Hook 主標題（≤ 10 字，簡短有力的問句或陳述）</label>
+          <input type="text" id="hookTitle" placeholder="例：你還記得那個味道嗎？" maxlength="40">
+          <div class="char-count" id="hookTitleCount">0 / 10</div>
         </div>
         <div class="field">
-          <label>Hook 內文（≤ 30 字）</label>
+          <label>Hook 內文（≤ 43 字，補充衝擊感讓人繼續滑）</label>
           <textarea id="hookBody" placeholder="補充衝擊感，讓人想繼續往下滑…" style="min-height:60px;"></textarea>
-          <div class="char-count" id="hookBodyCount">0 / 30</div>
+          <div class="char-count" id="hookBodyCount">0 / 43</div>
         </div>
         <div class="field">
           <label>Hook 類型</label>
@@ -771,14 +771,14 @@ footer {
         <div class="special-panel-title">📣 CTA 結尾設定</div>
         <div class="cta-tip">好的 CTA 讓人採取行動。<span>明確告訴讀者下一步要做什麼</span>，按讚、留言、儲存或追蹤。</div>
         <div class="field">
-          <label>CTA 主標題（≤ 15 字）</label>
-          <input type="text" id="ctaTitle" placeholder="例：現在開始打造你的品牌香氣" maxlength="40">
-          <div class="char-count" id="ctaTitleCount">0 / 15</div>
+          <label>CTA 主標題（≤ 10 字，清楚直接的行動指引）</label>
+          <input type="text" id="ctaTitle" placeholder="例：開始打造你的品牌香氣" maxlength="40">
+          <div class="char-count" id="ctaTitleCount">0 / 10</div>
         </div>
         <div class="field">
-          <label>CTA 行動呼籲文字（≤ 30 字）</label>
+          <label>CTA 行動呼籲文字（≤ 43 字，引導按讚留言收藏）</label>
           <textarea id="ctaBody" placeholder="收藏這篇、留言你的想法、或追蹤帳號…" style="min-height:60px;"></textarea>
-          <div class="char-count" id="ctaBodyCount">0 / 30</div>
+          <div class="char-count" id="ctaBodyCount">0 / 43</div>
         </div>
         <div class="field">
           <label>引導動作</label>
@@ -789,14 +789,14 @@ footer {
 
       <!-- 通用欄位（所有類型都有） -->
       <div class="field">
-        <label id="mainTitleLabel">主標題（≤ 15 字）</label>
+        <label id="mainTitleLabel">主標題（≤ 10 字，簡短有力）</label>
         <input type="text" id="mainTitle" placeholder="吸睛的主標題" maxlength="40">
-        <div class="char-count" id="titleCount">0 / 15</div>
+        <div class="char-count" id="titleCount">0 / 10</div>
       </div>
       <div class="field">
-        <label id="bodyTextLabel">內文說明（≤ 30 字）</label>
+        <label id="bodyTextLabel">內文說明（≤ 43 字，傳遞一個清晰重點）</label>
         <textarea id="bodyText" placeholder="簡短有力的說明文字"></textarea>
-        <div class="char-count" id="bodyCount">0 / 30</div>
+        <div class="char-count" id="bodyCount">0 / 43</div>
       </div>
     </div>
 
@@ -898,14 +898,14 @@ function updateSpecialPanels(){
   hp.classList.toggle('visible', type==='Hook');
   cp.classList.toggle('visible', type==='CTA');
   if(type==='Hook'){
-    ml.textContent='主標題（同步自 Hook 主標題）';
-    bl.textContent='內文（同步自 Hook 內文）';
+    ml.textContent='主標題（≤ 10 字，同步自 Hook 主標題）';
+    bl.textContent='內文（≤ 43 字，同步自 Hook 內文）';
   } else if(type==='CTA'){
-    ml.textContent='主標題（同步自 CTA 主標題）';
-    bl.textContent='內文（同步自 CTA 行動呼籲）';
+    ml.textContent='主標題（≤ 10 字，同步自 CTA 主標題）';
+    bl.textContent='內文（≤ 43 字，同步自 CTA 行動呼籲）';
   } else {
-    ml.textContent='主標題（≤ 15 字）';
-    bl.textContent='內文說明（≤ 30 字）';
+    ml.textContent='主標題（≤ 10 字，簡短有力）';
+    bl.textContent='內文說明（≤ 43 字，傳遞一個清晰重點）';
   }
 }
 
@@ -1152,18 +1152,18 @@ function upd(){
   // char counts for main fields
   const tlen=document.getElementById('mainTitle').value.length;
   const blen=document.getElementById('bodyText').value.length;
-  const tc2=document.getElementById('titleCount');tc2.textContent=`${tlen} / 15`;tc2.className='char-count'+(tlen>15?' char-over':'');
-  const bc=document.getElementById('bodyCount');bc.textContent=`${blen} / 30`;bc.className='char-count'+(blen>30?' char-over':'');
+  const tc2=document.getElementById('titleCount');tc2.textContent=`${tlen} / 10`;tc2.className='char-count'+(tlen>10?' char-over':'');
+  const bc=document.getElementById('bodyCount');bc.textContent=`${blen} / 43`;bc.className='char-count'+(blen>43?' char-over':'');
   // char counts for hook fields
   const htlen=document.getElementById('hookTitle').value.length;
   const hblen=document.getElementById('hookBody').value.length;
-  const htc=document.getElementById('hookTitleCount');htc.textContent=`${htlen} / 15`;htc.className='char-count'+(htlen>15?' char-over':'');
-  const hbc=document.getElementById('hookBodyCount');hbc.textContent=`${hblen} / 30`;hbc.className='char-count'+(hblen>30?' char-over':'');
+  const htc=document.getElementById('hookTitleCount');htc.textContent=`${htlen} / 10`;htc.className='char-count'+(htlen>10?' char-over':'');
+  const hbc=document.getElementById('hookBodyCount');hbc.textContent=`${hblen} / 43`;hbc.className='char-count'+(hblen>43?' char-over':'');
   // char counts for cta fields
   const ctlen=document.getElementById('ctaTitle').value.length;
   const cblen=document.getElementById('ctaBody').value.length;
-  const ctc=document.getElementById('ctaTitleCount');ctc.textContent=`${ctlen} / 15`;ctc.className='char-count'+(ctlen>15?' char-over':'');
-  const cbc=document.getElementById('ctaBodyCount');cbc.textContent=`${cblen} / 30`;cbc.className='char-count'+(cblen>30?' char-over':'');
+  const ctc=document.getElementById('ctaTitleCount');ctc.textContent=`${ctlen} / 10`;ctc.className='char-count'+(ctlen>10?' char-over':'');
+  const cbc=document.getElementById('ctaBodyCount');cbc.textContent=`${cblen} / 43`;cbc.className='char-count'+(cblen>43?' char-over':'');
 }
 
 function saveSlide(){
@@ -1247,7 +1247,7 @@ function reqGenText(){
     return;
   }
   const total=slCnt;
-  lastPrompt=`請根據主題關鍵字「${kw}」，產生 ${total} 張 Instagram 輪播貼文文案，語氣風格「${selTone}」。規則：第1張type為"Hook"（強烈開場，使用${selHookType}手法），第${total}張type為"CTA"（行動呼籲，引導讀者${selCtaAction}），其餘type為"一般"（每張一個重點）。內文不超過30字，主標題不超過15字。請只回傳以下JSON，不含任何說明或markdown：{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},{"type":"一般","mainTitle":"...","bodyText":"..."},{"type":"CTA","mainTitle":"...","bodyText":"..."}]}`;
+  lastPrompt=`請根據主題關鍵字「${kw}」，產生 ${total} 張 Instagram 輪播貼文文案，語氣風格「${selTone}」。規則：第1張type為"Hook"（強烈開場，使用${selHookType}手法），第${total}張type為"CTA"（行動呼籲，引導讀者${selCtaAction}），其餘type為"一般"（每張一個重點）。主標題不超過10字，所有頁面內文不超過43字。請只回傳以下JSON，不含任何說明或markdown：{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},{"type":"一般","mainTitle":"...","bodyText":"..."},{"type":"CTA","mainTitle":"...","bodyText":"..."}]}`;
   // 顯示預覽
   document.getElementById('promptPreview').value=lastPrompt;
   document.getElementById('promptPreviewWrap').style.display='block';
