@@ -320,9 +320,9 @@ label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px
   box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.06);
   transition: width 0.3s, height 0.3s;
 }
-.p-bg  { position: absolute; inset: 0; }
-.p-fil { position: absolute; inset: 0; }
-.p-cnt { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.p-bg  { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: center; }
+.p-fil { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.p-cnt { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; }
 .p-tag {
   font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
   text-transform: uppercase; padding: 2px 8px; border-radius: 4px;
@@ -1104,31 +1104,28 @@ function upd(){
   const pad=w<180?'12px':w<220?'16px':'22px';
   const box=document.getElementById('pbox');
   box.style.width=w+'px';box.style.height=h+'px';
-  document.getElementById('pbg').style.background=slides[curS]?.grad||curGrad;
-  // 若有圖片背景則疊加
-  const imgBg=slides[curS]?.imgBg||null;
-  const pbgEl=document.getElementById('pbg');
+  // 背景：圖片優先，否則用漸層
+  const imgBg = slides[curS]?.imgBg || null;
+  const pbgEl = document.getElementById('pbg');
   if(imgBg){
-    pbgEl.style.backgroundImage=`url(${imgBg})`;
-    pbgEl.style.backgroundSize='cover';
-    pbgEl.style.backgroundPosition='center';
-    pbgEl.style.background='';
+    pbgEl.style.backgroundImage = `url(${imgBg})`;
+    pbgEl.style.backgroundSize  = 'cover';
+    pbgEl.style.backgroundPosition = 'center';
+    pbgEl.style.background = ''; // 清除漸層
   } else {
-    pbgEl.style.backgroundImage='';
-    pbgEl.style.background=slides[curS]?.grad||curGrad;
+    pbgEl.style.backgroundImage = 'none';
+    pbgEl.style.background = slides[curS]?.grad || curGrad;
   }
-  // 濾鏡：圖片模式下確保濾鏡層正確顯示
-  const c=rgb(s.filterColor);
-  const filAlpha=s.filterOpacity/100;
-  const filColor=s.filterColor==='#ffffff'
-    ?`rgba(255,255,255,${filAlpha})`
-    :`rgba(${c.r},${c.g},${c.b},${filAlpha})`;
-  document.getElementById('pfil').style.background=filColor;
-  document.getElementById('pfil').style.zIndex='1';
-  document.getElementById('pcnt').style.zIndex='2';
+  // 濾鏡層：永遠疊在背景上
+  const c = rgb(s.filterColor);
+  const alpha = s.filterOpacity / 100;
+  document.getElementById('pfil').style.background =
+    s.filterColor === '#ffffff'
+      ? `rgba(255,255,255,${alpha})`
+      : `rgba(${c.r},${c.g},${c.b},${alpha})`;
   // 圖片模式時顯示濾鏡提示
-  const photoHint=document.getElementById('photoFilterHint');
-  if(photoHint) photoHint.style.display=imgBg?'block':'none';
+  const photoHint = document.getElementById('photoFilterHint');
+  if(photoHint) photoHint.style.display = imgBg ? 'block' : 'none';
   const cnt=document.getElementById('pcnt');
   cnt.style.padding=pad;
   cnt.style.alignItems=s.align==='left'?'flex-start':s.align==='center'?'center':'flex-end';
@@ -1218,14 +1215,16 @@ function renderThumbs(){
     const d=document.createElement('div');d.className='slide-thumb'+(i===curS?' on':'');
     const tw=ar>=1?52:Math.round(52*ar);const th=ar>=1?Math.round(52/ar):52;
     d.style.width=tw+'px';d.style.height=th+'px';
-    const c=rgb(s.filterColor||'#000');
-    const fil=s.filterColor==='#ffffff'?`rgba(255,255,255,${(s.filterOpacity||30)/100})`:`rgba(${c.r},${c.g},${c.b},${(s.filterOpacity||30)/100})`;
+    const c=rgb(s.filterColor||'#2a2018');
+    const fil=s.filterColor==='#ffffff'
+      ?`rgba(255,255,255,${(s.filterOpacity||15)/100})`
+      :`rgba(${c.r},${c.g},${c.b},${(s.filterOpacity||15)/100})`;
     const bgStyle=s.imgBg
-      ?`background:url(${s.imgBg}) center/cover`
-      :`background:${s.grad||GRADS[0].c}`;
+      ?`background-image:url(${s.imgBg});background-size:cover;background-position:center;`
+      :`background:${s.grad||GRADS[0].c};`;
     const tbc={Hook:'badge-hook',CTA:'badge-cta'};
     const badge=s.type&&s.type!=='一般'?`<div class="type-badge ${tbc[s.type]||''}">${s.type}</div>`:'';
-    d.innerHTML=`<div class="thumb-inner" style="${bgStyle};position:absolute;inset:0;"></div><div class="thumb-inner" style="position:absolute;inset:0;background:${fil};"></div>${badge}<div class="thumb-label">${s.mainTitle||'投影片 '+(i+1)}</div>`;
+    d.innerHTML=`<div style="position:absolute;inset:0;${bgStyle}"></div><div style="position:absolute;inset:0;background:${fil};"></div>${badge}<div class="thumb-label">${s.mainTitle||'投影片 '+(i+1)}</div>`;
     d.onclick=()=>{saveSlide();loadSlide(i);};row.appendChild(d);
   });
   const ab=document.createElement('div');ab.className='add-thumb';ab.textContent='+';
