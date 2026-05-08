@@ -721,8 +721,8 @@ footer {
     <div class="field">
       <label>內文大小</label>
       <div class="field-row">
-        <input type="range" id="bsz" min="10" max="28" value="12" step="1">
-        <span class="field-val" id="bszVal">12px</span>
+        <input type="range" id="bsz" min="10" max="28" value="10" step="1">
+        <span class="field-val" id="bszVal">10px</span>
       </div>
     </div>
   </div>
@@ -762,9 +762,9 @@ footer {
           <div class="char-count" id="hookTitleCount">0 / 10</div>
         </div>
         <div class="field">
-          <label>Hook 內文（≤ 43 字，補充衝擊感讓人繼續滑）</label>
+          <label>Hook 內文（≤ 60 字，補充衝擊感讓人繼續滑）</label>
           <textarea id="hookBody" placeholder="補充衝擊感，讓人想繼續往下滑…" style="min-height:60px;"></textarea>
-          <div class="char-count" id="hookBodyCount">0 / 43</div>
+          <div class="char-count" id="hookBodyCount">0 / 60</div>
         </div>
         <div class="field">
           <label>Hook 類型</label>
@@ -783,9 +783,9 @@ footer {
           <div class="char-count" id="ctaTitleCount">0 / 10</div>
         </div>
         <div class="field">
-          <label>CTA 行動呼籲文字（≤ 43 字，引導按讚留言收藏）</label>
+          <label>CTA 行動呼籲文字（≤ 60 字，引導按讚留言收藏）</label>
           <textarea id="ctaBody" placeholder="收藏這篇、留言你的想法、或追蹤帳號…" style="min-height:60px;"></textarea>
-          <div class="char-count" id="ctaBodyCount">0 / 43</div>
+          <div class="char-count" id="ctaBodyCount">0 / 60</div>
         </div>
         <div class="field">
           <label>引導動作</label>
@@ -801,9 +801,9 @@ footer {
         <div class="char-count" id="titleCount">0 / 10</div>
       </div>
       <div class="field">
-        <label id="bodyTextLabel">內文說明（≤ 43 字，傳遞一個清晰重點）</label>
+        <label id="bodyTextLabel">內文說明（≤ 60 字，傳遞一個清晰重點）</label>
         <textarea id="bodyText" placeholder="簡短有力的說明文字"></textarea>
-        <div class="char-count" id="bodyCount">0 / 43</div>
+        <div class="char-count" id="bodyCount">0 / 60</div>
       </div>
     </div>
 
@@ -889,7 +889,7 @@ const GRADS=[
 let globalRatio=0,slCnt=5,curS=0,selFil='#ffffff',selTxt='#3a3028',selTone='激勵人心';
 let selHookType=HOOK_TYPES[0], selCtaAction=CTA_ACTIONS[0];
 let curGrad=GRADS[0].c;
-const def=()=>({grad:GRADS[0].c,filterColor:'#ffffff',filterOpacity:15,mainTitle:'',bodyText:'',txtColor:'#3a3028',align:'left',valign:'flex-start',titleSize:18,bodySize:12,type:'一般',ratio:0,hookType:HOOK_TYPES[0],ctaAction:CTA_ACTIONS[0]});
+const def=()=>({grad:GRADS[0].c,filterColor:'#ffffff',filterOpacity:15,mainTitle:'',bodyText:'',txtColor:'#3a3028',align:'left',valign:'flex-start',titleSize:18,bodySize:10,type:'一般',ratio:0,hookType:HOOK_TYPES[0],ctaAction:CTA_ACTIONS[0]});
 let slides=[{...def(),mainTitle:'輪播貼文從這裡開始',bodyText:'填入主題關鍵字，讓 AI 幫你產出完整的輪播文案。',type:'一般',grad:GRADS[0].c}];
 
 const rgb=h=>({r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)});
@@ -906,13 +906,13 @@ function updateSpecialPanels(){
   cp.classList.toggle('visible', type==='CTA');
   if(type==='Hook'){
     ml.textContent='主標題（≤ 10 字，同步自 Hook 主標題）';
-    bl.textContent='內文（≤ 43 字，同步自 Hook 內文）';
+    bl.textContent='內文（≤ 60 字，同步自 Hook 內文）';
   } else if(type==='CTA'){
     ml.textContent='主標題（≤ 10 字，同步自 CTA 主標題）';
-    bl.textContent='內文（≤ 43 字，同步自 CTA 行動呼籲）';
+    bl.textContent='內文（≤ 60 字，同步自 CTA 行動呼籲）';
   } else {
     ml.textContent='主標題（≤ 10 字，簡短有力）';
-    bl.textContent='內文說明（≤ 43 字，傳遞一個清晰重點）';
+    bl.textContent='內文說明（≤ 60 字，傳遞一個清晰重點）';
   }
 }
 
@@ -1167,17 +1167,17 @@ function upd(){
   const tlen=document.getElementById('mainTitle').value.length;
   const blen=document.getElementById('bodyText').value.length;
   const tc2=document.getElementById('titleCount');tc2.textContent=`${tlen} / 10`;tc2.className='char-count'+(tlen>10?' char-over':'');
-  const bc=document.getElementById('bodyCount');bc.textContent=`${blen} / 43`;bc.className='char-count'+(blen>43?' char-over':'');
+  const bc=document.getElementById('bodyCount');bc.textContent=`${blen} / 60`;bc.className='char-count'+(blen>60?' char-over':'');
   // char counts for hook fields
   const htlen=document.getElementById('hookTitle').value.length;
   const hblen=document.getElementById('hookBody').value.length;
   const htc=document.getElementById('hookTitleCount');htc.textContent=`${htlen} / 10`;htc.className='char-count'+(htlen>10?' char-over':'');
-  const hbc=document.getElementById('hookBodyCount');hbc.textContent=`${hblen} / 43`;hbc.className='char-count'+(hblen>43?' char-over':'');
+  const hbc=document.getElementById('hookBodyCount');hbc.textContent=`${hblen} / 60`;hbc.className='char-count'+(hblen>60?' char-over':'');
   // char counts for cta fields
   const ctlen=document.getElementById('ctaTitle').value.length;
   const cblen=document.getElementById('ctaBody').value.length;
   const ctc=document.getElementById('ctaTitleCount');ctc.textContent=`${ctlen} / 10`;ctc.className='char-count'+(ctlen>10?' char-over':'');
-  const cbc=document.getElementById('ctaBodyCount');cbc.textContent=`${cblen} / 43`;cbc.className='char-count'+(cblen>43?' char-over':'');
+  const cbc=document.getElementById('ctaBodyCount');cbc.textContent=`${cblen} / 60`;cbc.className='char-count'+(cblen>60?' char-over':'');
 }
 
 function saveSlide(){
@@ -1193,7 +1193,7 @@ function loadSlide(i){
   document.getElementById('fopacity').value=s.filterOpacity;document.getElementById('opVal').textContent=s.filterOpacity+'%';
   document.getElementById('mainTitle').value=s.mainTitle;document.getElementById('bodyText').value=s.bodyText;
   document.getElementById('tsz').value=s.titleSize||18;document.getElementById('tszVal').textContent=(s.titleSize||18)+'px';
-  document.getElementById('bsz').value=s.bodySize||12;document.getElementById('bszVal').textContent=(s.bodySize||12)+'px';
+  document.getElementById('bsz').value=s.bodySize||10;document.getElementById('bszVal').textContent=(s.bodySize||10)+'px';
   // populate hook fields
   if(s.type==='Hook'){
     document.getElementById('hookTitle').value=s.mainTitle||'';
@@ -1262,7 +1262,7 @@ function reqGenText(){
     return;
   }
   const total=slCnt;
-  lastPrompt=`請根據主題關鍵字「${kw}」，產生 ${total} 張 Instagram 輪播貼文文案，語氣風格「${selTone}」。規則：第1張type為"Hook"（強烈開場，使用${selHookType}手法），第${total}張type為"CTA"（行動呼籲，引導讀者${selCtaAction}），其餘type為"一般"（每張一個重點）。主標題不超過10字，所有頁面內文不超過43字。請只回傳以下JSON，不含任何說明或markdown：{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},{"type":"一般","mainTitle":"...","bodyText":"..."},{"type":"CTA","mainTitle":"...","bodyText":"..."}]}`;
+  lastPrompt=`請根據主題關鍵字「${kw}」，產生 ${total} 張 Instagram 輪播貼文文案，語氣風格「${selTone}」。規則：第1張type為"Hook"（強烈開場，使用${selHookType}手法），第${total}張type為"CTA"（行動呼籲，引導讀者${selCtaAction}），其餘type為"一般"（每張一個重點）。主標題不超過10字，所有頁面內文不超過60字。請只回傳以下JSON，不含任何說明或markdown：{"slides":[{"type":"Hook","mainTitle":"...","bodyText":"..."},{"type":"一般","mainTitle":"...","bodyText":"..."},{"type":"CTA","mainTitle":"...","bodyText":"..."}]}`;
   // 顯示預覽
   document.getElementById('promptPreview').value=lastPrompt;
   document.getElementById('promptPreviewWrap').style.display='block';
