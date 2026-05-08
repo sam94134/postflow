@@ -1007,8 +1007,10 @@ function renderUploadedImgs(){
 function applyImgToSlide(idx, dataUrl){
   if(!slides[idx])return;
   slides[idx].imgBg=dataUrl;
-  upd();
-  renderThumbs();
+  // 強制清除再重設，確保瀏覽器重新渲染
+  const pbgEl=document.getElementById('pbg');
+  pbgEl.style.cssText='position:absolute;inset:0;z-index:0;';
+  setTimeout(()=>{ upd(); renderThumbs(); }, 10);
 }
 
 function applyImgAll(){
@@ -1108,13 +1110,17 @@ function upd(){
   const imgBg = slides[curS]?.imgBg || null;
   const pbgEl = document.getElementById('pbg');
   if(imgBg){
-    pbgEl.style.backgroundImage = `url(${imgBg})`;
-    pbgEl.style.backgroundSize  = 'cover';
-    pbgEl.style.backgroundPosition = 'center';
-    pbgEl.style.background = ''; // 清除漸層
+    // 圖片模式：用 CSS background shorthand 一次設定，避免屬性衝突
+    pbgEl.style.cssText = `
+      position: absolute; inset: 0; z-index: 0;
+      background: url("${imgBg}") center center / cover no-repeat;
+    `;
   } else {
-    pbgEl.style.backgroundImage = 'none';
-    pbgEl.style.background = slides[curS]?.grad || curGrad;
+    // 漸層模式
+    pbgEl.style.cssText = `
+      position: absolute; inset: 0; z-index: 0;
+      background: ${slides[curS]?.grad || curGrad};
+    `;
   }
   // 濾鏡層：永遠疊在背景上
   const c = rgb(s.filterColor);
@@ -1220,7 +1226,7 @@ function renderThumbs(){
       ?`rgba(255,255,255,${(s.filterOpacity||15)/100})`
       :`rgba(${c.r},${c.g},${c.b},${(s.filterOpacity||15)/100})`;
     const bgStyle=s.imgBg
-      ?`background-image:url(${s.imgBg});background-size:cover;background-position:center;`
+      ?`background:url("${s.imgBg}") center center / cover no-repeat;`
       :`background:${s.grad||GRADS[0].c};`;
     const tbc={Hook:'badge-hook',CTA:'badge-cta'};
     const badge=s.type&&s.type!=='一般'?`<div class="type-badge ${tbc[s.type]||''}">${s.type}</div>`:'';
